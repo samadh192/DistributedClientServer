@@ -12,15 +12,29 @@ let connectToServer () =
 
     let stream = client.GetStream()
 
-    // Receive and print data from the server
-    let bufferLength = 256
-    let buffer = Array.zeroCreate<byte> bufferLength
-    let bytesRead = stream.Read(buffer, 0, buffer.Length)
+    // Create a loop to send messages to the server
+    let mutable continueCommunication = true
+    while continueCommunication do
+        // Read user input from the console
+        Console.Write("Enter a message to send to the server (or 'bye' to exit): ")
+        let userInput = Console.ReadLine()
 
-    // Convert the received bytes to a string
-    let message = Encoding.ASCII.GetString(buffer, 0, bytesRead)
-    Console.WriteLine("Received from server: {0}", message)
+        // Convert the user input to bytes and send it to the server
+        let inputBytes = Encoding.ASCII.GetBytes(userInput)
+        stream.Write(inputBytes, 0, inputBytes.Length)
 
+        // Receive and print the server's response
+        let bufferLength = 256
+        let buffer = Array.zeroCreate<byte> bufferLength
+        let bytesRead = stream.Read(buffer, 0, buffer.Length)
+        let receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead)
+        Console.WriteLine("Received from server: {0}", receivedMessage)
+
+        // Check if the user wants to exit
+        if userInput.Trim().ToLower() = "bye" then
+            continueCommunication <- false
+
+    // Close the client connection
     client.Close()
 
 connectToServer()
