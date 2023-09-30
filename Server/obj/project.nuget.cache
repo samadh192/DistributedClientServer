@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Jm8KmKbrL/0rr9E1jQNpWPPABYYLKKQZZ+1A9CPRCuGq3OPlukINUhioLVEik43odQV5/nI4z8IAK4G59OqHzA==",
+  "success": true,
+  "projectFilePath": "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/Server.fsproj",
+  "expectedPackageFiles": [
+    "/Users/abdul/.nuget/packages/fsharp.core/7.0.400/fsharp.core.7.0.400.nupkg.sha512"
+  ],
+  "logs": []
+}
