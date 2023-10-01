@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/Server.fsproj": {}
+    "/Users/vedantpatil/Documents/GitHub/DistributedClientServer/Server/Server.fsproj": {}
   },
   "projects": {
-    "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/Server.fsproj": {
+    "/Users/vedantpatil/Documents/GitHub/DistributedClientServer/Server/Server.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/Server.fsproj",
+        "projectUniqueName": "/Users/vedantpatil/Documents/GitHub/DistributedClientServer/Server/Server.fsproj",
         "projectName": "Server",
-        "projectPath": "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/Server.fsproj",
-        "packagesPath": "/Users/abdul/.nuget/packages/",
-        "outputPath": "/Users/abdul/Documents/Code/DOSP/DistributedClientServer/Server/obj/",
+        "projectPath": "/Users/vedantpatil/Documents/GitHub/DistributedClientServer/Server/Server.fsproj",
+        "packagesPath": "/Users/vedantpatil/.nuget/packages/",
+        "outputPath": "/Users/vedantpatil/Documents/GitHub/DistributedClientServer/Server/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/abdul/.nuget/NuGet/NuGet.Config"
+          "/Users/vedantpatil/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
