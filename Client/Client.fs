@@ -6,7 +6,6 @@ open System.Text
 let connectToServer () =
     let serverIpAddress = IPAddress.Parse("127.0.0.1") // Replace with the server's IP address
     let serverPort = 12345 // Replace with the server's port number
-
     let client = new TcpClient()
     client.Connect(serverIpAddress, serverPort)
 
