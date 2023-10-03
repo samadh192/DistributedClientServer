@@ -5,28 +5,53 @@ open System.Text
 
 
 let add result = 
-    Console.WriteLine("Add numbers")
-    let mutable sum = 0
-    for i = 2 to Array.length result - 1 do
-        let temp = result[i]|> int 
-        sum <- sum +  temp
-    Console.WriteLine(sum)
+    if Array.length result < 3 then 
+        -2
+    elif  Array.length result > 5 then
+        -4
+    else
+        let mutable sum = 0
+        for i = 1 to Array.length result - 1 do
+            try
+                let temp = result[i]|> int 
+                sum <- sum +  temp
+            with
+            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
+        sum
+    
 
 let mult result = 
-    Console.WriteLine("Multiply numbers")
-    let mutable mul = 1
-    for i = 2 to Array.length result - 1 do
-        let temp = result[i]|> int 
-        mul <- mul *  temp
-    Console.WriteLine(mul)
+    if Array.length result < 3 then 
+        -2
+    elif  Array.length result > 5 then
+        -4
+    else
+        let mutable mult = 0
+        for i = 1 to Array.length result - 1 do
+            try
+                let temp = result[i]|> int 
+                mult <- mult *  temp
+            with
+            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
+        mult
 
 let subtract result = 
-    Console.WriteLine("Subtract numbers")
-    let mutable sub = 0
-    for i = 2 to Array.length result - 1 do
-        let temp = result[i]|> int 
-        sub <- sub -  temp
-    Console.WriteLine(sub)
+    if Array.length result < 3 then 
+        -2
+    elif  Array.length result > 5 then
+        -4
+    else
+        let mutable sub = 0
+        for i = 1 to Array.length result - 1 do
+            try
+                let temp = result[i]|> int 
+                if i = 1 then 
+                    sub <- temp
+                else 
+                    sub <- sub -  temp 
+            with
+            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
+        sub
 
 let handleClient (client : TcpClient) =
     async {
@@ -46,21 +71,23 @@ let handleClient (client : TcpClient) =
                     continueCommunication <- false
                 else
                     let receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead)
-                    Console.WriteLine("Received from client {0}: {1}", clientID, receivedMessage)
-                    let result = receivedMessage.Split ' '
-                    
-                    let res =   match result[0] with
-                                | "add" -> add result
-                                | "multiply" -> mult result
-                                | "subtract" -> subtract result
-                                | _ -> Console.WriteLine("Anything")
-
-                    if receivedMessage.Trim().ToLower() = "bye" then
+                    let mutable res = 0
+                    if receivedMessage.Trim().ToLower() = "terminate" then
+                        res <- -5
                         continueCommunication <- false
-                    else
-                        let responseMessage = receivedMessage + " from the server"
-                        let responseBytes = Encoding.ASCII.GetBytes(responseMessage)
-                        do! Async.AwaitTask (stream.WriteAsync(responseBytes, 0, responseBytes.Length))
+                    else 
+                        let result = receivedMessage.Split ' '
+                        
+                        res <-   match result[0] with
+                                    | "add" -> add result
+                                    | "multiply" -> mult result
+                                    | "subtract" -> subtract result
+                                    | _ -> -1
+
+                    let responseMessage = res|> string
+                    Console.WriteLine("Responding to Client {0} with result: {1}", clientID, responseMessage)
+                    let responseBytes = Encoding.ASCII.GetBytes(responseMessage)
+                    do! Async.AwaitTask (stream.WriteAsync(responseBytes, 0, responseBytes.Length))
             with
             | :? System.IO.IOException -> continueCommunication <- false
 
