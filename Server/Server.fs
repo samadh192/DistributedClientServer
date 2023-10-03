@@ -5,52 +5,64 @@ open System.Text
 
 
 let add result = 
+    let mutable continueProcessing = true
     if Array.length result < 3 then 
         -2
     elif  Array.length result > 5 then
-        -4
+        -3
     else
         let mutable sum = 0
         for i = 1 to Array.length result - 1 do
-            try
-                let temp = result[i]|> int 
-                sum <- sum +  temp
-            with
-            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
+            if continueProcessing then
+                try
+                    let temp = result[i]|> int 
+                    sum <- sum +  temp
+                with
+                | :? System.FormatException as ex -> 
+                    continueProcessing <- false
+                    sum <- -4
         sum
     
 
 let mult result = 
+    let mutable continueProcessing = true
     if Array.length result < 3 then 
         -2
     elif  Array.length result > 5 then
-        -4
+        -3
     else
-        let mutable mult = 0
+        let mutable product = 1
         for i = 1 to Array.length result - 1 do
-            try
-                let temp = result[i]|> int 
-                mult <- mult *  temp
-            with
-            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
-        mult
+            if continueProcessing then
+                try
+                    let temp = result[i]|> int 
+                    product <- product *  temp
+                with
+                | :? System.FormatException as ex ->
+                    continueProcessing <- false
+                    product <- -4
+        product
 
 let subtract result = 
+    let mutable continueProcessing = true
     if Array.length result < 3 then 
         -2
     elif  Array.length result > 5 then
-        -4
+        -3
     else
         let mutable sub = 0
         for i = 1 to Array.length result - 1 do
-            try
-                let temp = result[i]|> int 
-                if i = 1 then 
-                    sub <- temp
-                else 
-                    sub <- sub -  temp 
-            with
-            | :? System.FormatException as ex -> Console.WriteLine("Return -4 to the server and break the loop")//Pending 
+            if continueProcessing then
+                try
+                    let temp = result[i]|> int 
+                    if i = 1 then 
+                        sub <- temp
+                    else 
+                        sub <- sub -  temp 
+                with
+                | :? System.FormatException as ex -> 
+                    continueProcessing <- false
+                    sub <- -4
         sub
 
 let handleClient (client : TcpClient) =
