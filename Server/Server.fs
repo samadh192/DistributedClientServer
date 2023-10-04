@@ -94,6 +94,7 @@ let handleClient (client : TcpClient) =
                                     | "add" -> add result
                                     | "multiply" -> mult result
                                     | "subtract" -> subtract result
+                                    | "bye" -> -5
                                     | _ -> -1
 
                     let responseMessage = res|> string

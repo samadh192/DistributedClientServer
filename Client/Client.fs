@@ -29,8 +29,7 @@ let connectToServer () =
         let receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead)
         Console.WriteLine("Received from server: {0}", receivedMessage)
 
-        // Check if the user wants to exit
-        if userInput.Trim().ToLower() = "bye" then
+        if receivedMessage = (-5).ToString() then
             continueCommunication <- false
 
     // Close the client connection
