@@ -5,6 +5,17 @@ open System.Collections.Generic
 open System.Text
 
 let clients = new List<TcpClient>()
+let ClientMap = new Dictionary<EndPoint, int>()
+let nextClientNumber = ref 1
+
+let getClientNumber endPoint = 
+    if ClientMap.ContainsKey(endPoint) then
+        ClientMap.[endPoint]
+    else
+        let clientNumber = !nextClientNumber
+        ClientMap.Add(endPoint, clientNumber)
+        nextClientNumber := clientNumber + 1
+        clientNumber
 
 let broadcastMessage (message: string) =
     let messageBytes = Encoding.ASCII.GetBytes(message)
@@ -18,6 +29,8 @@ let broadcastMessage (message: string) =
             with
             | :? System.IO.IOException ->
                 disconnectedClients := client :: !disconnectedClients
+            | :? System.ObjectDisposedException ->
+                Console.WriteLine("System.ObjectDisposedException caught")
     )
 
     // Remove disconnected clients
@@ -88,7 +101,7 @@ let subtract result =
 let handleClient (client : TcpClient) =
     async {
         let clientID = client.Client.RemoteEndPoint
-        Console.WriteLine("Client connected: {0}", clientID)
+        Console.WriteLine("Client connected: {0}", getClientNumber clientID)
         lock clients (fun () -> clients.Add(client))
 
 
@@ -121,14 +134,14 @@ let handleClient (client : TcpClient) =
                                     | _ -> -1
 
                     let responseMessage = res|> string
-                    Console.WriteLine("Responding to Client {0} with result: {1}", clientID, responseMessage)
+                    Console.WriteLine("Responding to Client {0} with result: {1}", getClientNumber clientID, responseMessage)
                     let responseBytes = Encoding.ASCII.GetBytes(responseMessage)
                     do! Async.AwaitTask (stream.WriteAsync(responseBytes, 0, responseBytes.Length))
             with
             | :? System.IO.IOException -> continueCommunication <- false
 
         client.Close()
-        Console.WriteLine("Client disconnected: {0}", clientID)
+        Console.WriteLine("Client disconnected: {0}", getClientNumber clientID)
     }
 
 
