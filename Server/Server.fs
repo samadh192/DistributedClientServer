@@ -1,8 +1,28 @@
 ﻿open System
 open System.Net
 open System.Net.Sockets
+open System.Collections.Generic
 open System.Text
 
+let clients = new List<TcpClient>()
+
+let broadcastMessage (message: string) =
+    let messageBytes = Encoding.ASCII.GetBytes(message)
+    let disconnectedClients = ref []
+
+    lock clients (fun () ->
+        for client in clients do
+            try
+                let stream = client.GetStream()
+                stream.Write(messageBytes, 0, messageBytes.Length)
+            with
+            | :? System.IO.IOException ->
+                disconnectedClients := client :: !disconnectedClients
+    )
+
+    // Remove disconnected clients
+    for disconnectedClient in !disconnectedClients do
+        lock clients (fun () -> clients.Remove(disconnectedClient)) |> ignore
 
 let add result = 
     let mutable continueProcessing = true
@@ -69,6 +89,8 @@ let handleClient (client : TcpClient) =
     async {
         let clientID = client.Client.RemoteEndPoint
         Console.WriteLine("Client connected: {0}", clientID)
+        lock clients (fun () -> clients.Add(client))
+
 
         let stream = client.GetStream()
         let bufferLength = 256
@@ -87,6 +109,7 @@ let handleClient (client : TcpClient) =
                     if receivedMessage.Trim().ToLower() = "terminate" then
                         res <- -5
                         continueCommunication <- false
+                        broadcastMessage "-5"
                     else 
                         let result = receivedMessage.Split ' '
                         
