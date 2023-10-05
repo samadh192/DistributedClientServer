@@ -35,6 +35,7 @@ let receiveFromServer (client: TcpClient) (cancellationToken: CancellationTokenS
             if receivedMessage = (-5).ToString() then
                 continueCommunication <- false
                 cancellationToken.Cancel()
+                Environment.Exit(0)
     }
 
 [<EntryPoint>]

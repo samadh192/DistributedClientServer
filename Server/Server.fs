@@ -3,7 +3,10 @@ open System.Net
 open System.Net.Sockets
 open System.Collections.Generic
 open System.Text
+open System.Threading
 
+
+let cancellationTokenSource = new CancellationTokenSource()
 let clients = new List<TcpClient>()
 let ClientMap = new Dictionary<EndPoint, int>()
 let nextClientNumber = ref 1
@@ -123,6 +126,8 @@ let handleClient (client : TcpClient) =
                         res <- -5
                         continueCommunication <- false
                         broadcastMessage "-5"
+                        cancellationTokenSource.Cancel() 
+                        Environment.Exit(0) // Exit the application forcefully
                     else 
                         let result = receivedMessage.Split ' '
                         
@@ -156,12 +161,18 @@ let startServer () =
 
     let rec acceptClients () =
         async {
-            let! client = Async.AwaitTask (listener.AcceptTcpClientAsync())
-            async {
-                let! _ = Async.StartChild (handleClient client)
-                return ()
-            } |> Async.Start
-            return! acceptClients ()
+            try
+                let! client = Async.AwaitTask (listener.AcceptTcpClientAsync())
+                async {
+                    let! _ = Async.StartChild (handleClient client)
+                    return ()
+                } |> Async.Start
+                return! acceptClients ()
+            with
+            | :? OperationCanceledException ->
+                // Handle server termination (e.g., log a message)
+                Console.WriteLine("Server terminated.")
+                listener.Stop()
         }
 
     Async.RunSynchronously (acceptClients ())
